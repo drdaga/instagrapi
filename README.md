@@ -155,3 +155,5 @@ To release, you need to call the following commands:
 
     python setup.py sdist
     twine upload dist/*
+
+Test
