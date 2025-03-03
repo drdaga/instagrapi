@@ -1,19 +1,29 @@
-FROM python:3.9-slim
+FROM python:3.11.4-buster
 
-# Install dependencies
-RUN apt-get update && apt-get install -y imagemagick && rm -rf /var/lib/apt/lists/*
+ARG _USER="instagrapi"
+ARG _UID="1001"
+ARG _GID="100"
+ARG _SHELL="/bin/bash"
 
-# Set working directory
+
+RUN useradd -m -s "${_SHELL}" -N -u "${_UID}" "${_USER}"
+
+ENV USER ${_USER}
+ENV UID ${_UID}
+ENV GID ${_GID}
+ENV HOME /home/${_USER}
+ENV PATH "${HOME}/.local/bin/:${PATH}"
+ENV PIP_NO_CACHE_DIR "true"
+
+
+RUN mkdir /app && chown ${UID}:${GID} /app
+
+USER ${_USER}
+
+COPY --chown=${UID}:${GID} ./requirements* /app/
+COPY --chown=${UID}:${GID} ./util /app/util/
 WORKDIR /app
 
-# Copy project files
-COPY . /app
+RUN pip install -r requirements.txt -r requirements-test.txt
 
-# Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Expose port
-EXPOSE 8000
-
-# Run FastAPI app with Uvicorn
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD bash
