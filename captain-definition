@@ -1,4 +1,5 @@
 {
   "schemaVersion": 2,
-  "dockerfilePath": "./docker/devbox.dockerfile"
+  "dockerfilePath": "./docker/devbox.dockerfile",
+  "containerHttpPort": "8000"
 }
